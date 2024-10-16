@@ -1,0 +1,182 @@
+@startuml
+hide circle
+top to bottom direction
+
+!define ENTITY(entityName) class entityName << Entity >>
+!define AGGREGATE_ENTITY(aggregateName) class aggregateName << Aggregate Entity>>
+!define AGGREGATE_ROOT(aggregateRootName) class aggregateRootName << Aggregate Root >>
+!define AGGREGATE_ROOT_ENTITY(aggregateRootEntityName) class aggregateRootEntityName << Aggregate Root >> << Entity >>
+!define VALUE_OBJECT(valueObjectName) class valueObjectName << Value Object >>
+!define DESCRIPTION(description) class description
+!pragma useVerticalIf on
+skinparam dpi 350
+skinparam packageStyle rectangle
+skinparam rectangle {
+    BackgroundColor #f7f4eb
+    BorderColor Black
+}
+
+rectangle "Barber Shop" as BoundedContextBarberShop #line.dashed {
+
+
+Package "Barber Sub-Domain" <<Rectangle>> #3399FF{
+        ENTITY(Barber) #lightblue{
+            firstName: String
+            lastName: String
+            email: String
+            salary: Decimal
+            dateOfBirth: DateTime
+        }
+        VALUE_OBJECT(BarberIdentifier) #Bisque{
+            SIN: String
+        }
+        VALUE_OBJECT(BarberAddress) #Bisque{
+                street: String
+                city: String
+                province: String
+                country: String
+        }
+        VALUE_OBJECT(BarberPhoneNumber) #Bisque {
+            number: String
+        }
+
+        VALUE_OBJECT(Specialty) #Bisque {
+            title: String
+        }
+
+        Barber --> "1" BarberIdentifier
+        Barber o--> "1..*" Specialty
+        Barber o--> "1" BarberAddress
+        Barber o--> "1" BarberPhoneNumber
+
+
+    }
+
+     Package "Client Sub-Domain" <<Rectangle>> #FFCDD2{
+            ENTITY(Client) #lightpink{
+                firstName: String
+                lastName: String
+                email: String
+                phoneNumber: String
+            }
+
+            VALUE_OBJECT(ClientAddress) #Bisque{
+                    street: String
+                    city: String
+                    province: String
+                    country: String
+            }
+
+            VALUE_OBJECT(ClientPhoneNumber) #Bisque {
+                number: String
+            }
+
+             VALUE_OBJECT(ClientIdentifier) #Bisque{
+                        clientId: UUID
+                    }
+
+            Client "1" --> "1" ClientIdentifier
+            Client o--> "1" ClientAddress
+            Client o--> "1" ClientPhoneNumber
+
+     }
+
+
+   Package "Appointment Sub-Domain" <<Rectangle>> #Lavender {
+
+       AGGREGATE_ENTITY(Appointment) #lightblue {
+          date: timeDate
+          time: timeDate
+          service: String
+          numberOfPeople: Integer
+       }
+
+       VALUE_OBJECT(AppointmentIdentifier) #Bisque{
+          appointmentId: UUID
+       }
+
+       VALUE_OBJECT(Service){
+           type: String
+       }
+
+       Appointment --> "1" AppointmentIdentifier
+       Appointment "1" o--> "1..*" Service
+       Appointment *-u-> "1" BarberIdentifier
+       Appointment o-u-> "1" ClientIdentifier
+
+       note "Invariant: [When a Barber gets an appointment updated from booked, done or canceled; their status of isAvailable changes to true]" as appointmentInvariant1
+   }
+
+   Package "Payment Sub-Domain" <<Rectangle>> #LightSalmon {
+
+      AGGREGATE_ENTITY(Receipt) #lightblue {
+        description: String
+        date: dateTime
+        time: dateTime
+      }
+
+      VALUE_OBJECT(ReceiptIdentifier){
+        receiptId: UUID
+      }
+
+      VALUE_OBJECT(PaymentMethod){
+        paymentMethod: String
+      }
+
+      VALUE_OBJECT(Price){
+        amount: String
+        currency: Currency
+      }
+
+      Receipt o--> "1" ReceiptIdentifier
+      Receipt --> "1" PaymentMethod
+      Receipt o--> "1" AppointmentIdentifier
+      Receipt o-->  "1" Price
+   }
+
+     Package "Equipment Sub-Domain" <<Rectangle>> #Salmon {
+
+          AGGREGATE_ENTITY(Equipment) #lightblue {
+            name: String
+            description: String
+            acquisitionDate: dateTime
+            purchasePrice: decimal
+          }
+
+          VALUE_OBJECT(EquipmentIdentifier){
+            serialNumber: String
+          }
+
+          VALUE_OBJECT(Price){
+            amount: Decimal
+            currency: Currency
+          }
+
+          VALUE_OBJECT(EquipmentStatus){
+            status: String
+          }
+
+          Equipment o--> EquipmentIdentifier
+          Equipment --> Price
+          Equipment "1" o--> "1" EquipmentStatus
+          Equipment "1..*" --> "1" BarberIdentifier
+       }
+
+
+   Package "Reviews Sub-Domain" <<Rectangle>> #LightSalmon {
+
+         AGGREGATE_ENTITY(Review) #lightblue {
+           description: String
+           score: Integer
+         }
+
+         VALUE_OBJECT(ReviewIdentifier){
+           reviewId: UUID
+         }
+
+         Review "0..." o--> "1" AppointmentIdentifier
+         Review "1" --> "1" ReviewIdentifier
+      }
+}
+
+@enduml

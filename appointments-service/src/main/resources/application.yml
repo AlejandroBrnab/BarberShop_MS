@@ -1,0 +1,79 @@
+# Default Spring Profile
+server:
+  error:
+    include-message: always
+
+logging:
+  level:
+    root: INFO
+    com.barbershop: DEBUG
+    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+
+---
+# for test
+
+spring:
+  config:
+    activate:
+      on-profile: test
+
+  data:
+    mongodb:
+      username: user
+      password: pwd
+      host: localhost
+      port: 0
+      database: appointments-db
+      authentication-database: admin
+      auto-index-creation: true
+
+de:
+  flapdoodle:
+    mongodb:
+      embedded:
+        version: 5.0.5
+
+app:
+  barbers-service:
+    host: localhost
+    port: 7001
+  clients-service:
+    host: localhost
+    port: 7002
+  reviews-service:
+    host: localhost
+    port: 7003
+
+---
+
+# for docker
+
+spring:
+  config:
+    activate:
+      on-profile: docker
+
+  data:
+    mongodb:
+      username: user
+      password: pwd
+      database: appointments-db
+      host: mongodb
+      port: 27017
+      authentication-database: admin
+      auto-index-creation: true
+
+server.port: 8080
+
+#spring.datasource.hikari.initializationFailTimeout: 60000
+
+app:
+  barbers-service:
+    host: barbers-service
+    port: 8080
+  clients-service:
+    host: clients-service
+    port: 8080
+  reviews-service:
+    host: reviews-service
+    port: 8080

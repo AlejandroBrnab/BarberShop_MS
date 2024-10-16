@@ -1,0 +1,27 @@
+@startuml
+left to right direction
+
+actor Staff as s1
+actor Student as s2
+actor "Event Client" as s3
+
+rectangle "System" {
+  s1 -down-> (Confirm Student Registration)
+  s1 -down-> (Confirm Event Booking)
+  s1 -down-> (View Registrations)
+  s1 -down-> (Choose Participants)
+  s1 -down-> (Request confirmation from participant)
+  s1 -down-> (Message Event Client)
+
+  s2 -down-> (Register for course)
+  s2 -down-> (Confirm participation)
+
+  s3 -down-> (View event status)
+  s3 -down-> (Modify Event Booking)
+  s3 -down-> (Book Event)
+
+  (Modify Event Booking) --|> (Book Event) : <<extends>>
+  (Choose Participants) --|> (View Registrations) : <<include>>
+  (Confirm Event Booking) --|> (Book Event) : <<include>>
+}
+@enduml

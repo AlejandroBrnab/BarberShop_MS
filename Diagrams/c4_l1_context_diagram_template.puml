@@ -1,0 +1,13 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Context.puml
+
+title System Context Diagram for Barbershop System
+
+Person(barber, "Barber", "Employee of the barbershop")
+Person(client, "Client", "Client of the barbershop")
+System(barber_shop, "Barbershop System", "Allows barbershop employees to check booked appointments and reviews")
+
+Rel(barber, barber_shop, "Checks clients appointments and reviews", "Uses")
+Rel(client, barber_shop, "Book an appointment and write review", "Uses")
+'SHOW_LEGEND()
+@enduml

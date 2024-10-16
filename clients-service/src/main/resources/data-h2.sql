@@ -1,0 +1,2 @@
+-- Sample data for clients table
+INSERT INTO clients (client_id, first_name, last_name, email_address, street_address, city, province, country, postal_code, phone_number) VALUES('81-712-9162', 'Juan', 'Perez', 'alice@example.com', '789 Oak St', 'Somewhere', 'Quebec', 'Canada', 'M1N2O3', '748-107-9665')

@@ -1,0 +1,59 @@
+# Default Spring Profile
+server:
+  error:
+    include-message: always
+
+logging:
+  level:
+    root: INFO
+    com.barbershop: DEBUG
+
+---
+# for test
+
+spring:
+  config:
+    activate:
+      on-profile: test
+
+app:
+  barbers-service:
+    host: localhost
+    port: 7001
+  clients-service:
+    host: localhost
+    port: 7002
+  reviews-service:
+    host: localhost
+    port: 7003
+  appointments-service:
+    host: localhost
+    port: 7004
+
+---
+
+# for docker
+
+spring:
+  config:
+    activate:
+      on-profile: docker
+
+
+server.port: 8080
+
+#spring.datasource.hikari.initializationFailTimeout: 60000
+
+app:
+  barbers-service:
+    host: barbers-service
+    port: 8080
+  clients-service:
+    host: clients-service
+    port: 8080
+  reviews-service:
+    host: reviews-service
+    port: 8080
+  appointments-service:
+    host: appointments-service
+    port: 8080
